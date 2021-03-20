@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Image Processor</title>
+    <script src="filesave.min.js"></script>
+</head>
+<body>
+    <input type='file' />
+    <canvas style="visibility: hidden;"></canvas>
+</body>
+<script>
+    document.querySelector('input').addEventListener('drop', e => {
+        e.preventDefault();
+        console.log(e);
+        const reader = new FileReader();
+        var file = e.dataTransfer.files[0];
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            const image = new Image();
+            image.src = reader.result;
+            image.onload = () => {
+                const canvas = document.querySelector('canvas');
+                canvas.width = image.width;
+                canvas.height = image.height * 1.5;
+                const context = canvas.getContext('2d');
+                context.drawImage(image, 0, image.height * 0.5);
+
+                // var img = canvas.toDataURL("image/png")
+                canvas.toBlob(function(blob) {
+                    saveAs(blob, `hex-shifted-${file.name}.png`)
+                })
+            }
+        }
+    });
+</script>
+</html>
+
